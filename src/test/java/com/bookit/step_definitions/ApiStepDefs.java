@@ -21,6 +21,7 @@ public class ApiStepDefs {
     String token;
     Response response;
     String emailGlobal;
+    // static int idToDelete;
 
     @Given("I logged Bookit api as a {string}")
     public void i_logged_bookit_api_as_a(String role) {
@@ -159,5 +160,36 @@ public class ApiStepDefs {
         String expectedNameFromAPI = actualFirstName + " " + actualLastName;
         Assert.assertEquals(expectedNameFromAPI, actualFullNameUI);
         Assert.assertEquals(actualRole, actualRoleUI);
+    }
+
+
+    //ADDING A NEW STUDENT AND DELETING IT
+
+    @When("I send POST request {string} endpoint with following information")
+    public void i_send_post_request_endpoint_with_following_information(String endpoint, Map<String, String> studentInfo) {
+        response = given().accept(ContentType.JSON)
+                .header("Authorization", token)
+                .queryParams(studentInfo)
+                .when().post(Environment.BASE_URL + endpoint).prettyPeek();
+
+    }
+
+    @Then("I delete previously added student")
+    public void i_delete_previously_added_student() {
+        //we need to get the entryiId from the post request and send delete request to it.
+        int idToDelete = response.path("entryiId");
+        System.out.println("idToDelete = " + idToDelete);
+
+        //Send DELETE request to idToDelete path parameter
+        // .accept(ContentType.JSON) -> we do not write it here because delete request is returning 204 -> there is no response body
+        // if we do not expect response body, we do not need to ask response body
+
+        given()
+                .header("Authorization", token)
+                .pathParam("id", idToDelete)
+                .when()
+                .delete(Environment.BASE_URL + "/api/students/{id}")
+                .then().statusCode(204);
+
     }
 }
