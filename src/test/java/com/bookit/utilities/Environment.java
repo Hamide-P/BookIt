@@ -29,7 +29,7 @@ public class Environment {
 
         try {
             //where is our file ?, path is holding that one
-            String path = System.getProperty("user.dir") + "/src/test/resources/Environments/" + environment + ".properties";
+            String path = System.getProperty("user.dir") + "/src/test/resources/Environment/" + environment + ".properties";
 
             FileInputStream input = new FileInputStream(path);
             properties = new Properties();
